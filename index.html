@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>MAX пуши</title>
+  <meta name="description" content="Приёмник уведомлений MAX для приложения MAX Custom">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon-192.png">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="MAX пуши">
+  <meta name="theme-color" content="#f4f6fb" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#121418" media="(prefers-color-scheme: dark)">
+  <style>
+    :root {
+      --bg: #f4f6fb;
+      --card: #ffffff;
+      --text: #14171f;
+      --muted: #6b7280;
+      --line: #e6e9f0;
+      --accent: #3a7bf0;
+      --accent-text: #ffffff;
+      --ok: #1f9d55;
+      color-scheme: light dark;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #121418;
+        --card: #1c1f26;
+        --text: #eef1f6;
+        --muted: #9aa3b2;
+        --line: #2a2f39;
+        --accent: #5b93f5;
+        --ok: #3ccf7d;
+      }
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; }
+    body {
+      min-height: 100vh;
+      padding: max(28px, env(safe-area-inset-top)) 16px max(28px, env(safe-area-inset-bottom));
+      background: var(--bg);
+      color: var(--text);
+      font: 16px/1.45 -apple-system, BlinkMacSystemFont, "SF Pro Text", Roboto, "Segoe UI", sans-serif;
+      -webkit-text-size-adjust: 100%;
+    }
+    main { max-width: 440px; margin: 0 auto; }
+    .head { display: flex; align-items: center; gap: 14px; margin-bottom: 22px; }
+    .head img { width: 56px; height: 56px; border-radius: 14px; }
+    h1 { margin: 0; font-size: 22px; line-height: 1.2; }
+    .head p { margin: 2px 0 0; color: var(--muted); font-size: 14px; }
+    .card {
+      padding: 18px;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      background: var(--card);
+    }
+    .card + .card { margin-top: 12px; }
+    .card h2 { margin: 0 0 10px; font-size: 17px; }
+    .card p { margin: 0 0 12px; }
+    .card p:last-child { margin-bottom: 0; }
+    ol { margin: 0; padding-left: 22px; }
+    li { margin: 6px 0; }
+    .share {
+      display: inline-block;
+      width: 18px;
+      height: 18px;
+      vertical-align: -3px;
+      color: var(--accent);
+    }
+    button {
+      display: block;
+      width: 100%;
+      min-height: 50px;
+      margin-top: 10px;
+      padding: 12px 16px;
+      border: 0;
+      border-radius: 12px;
+      background: var(--accent);
+      color: var(--accent-text);
+      font: inherit;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    button.secondary { background: transparent; color: var(--accent); border: 1px solid var(--line); }
+    button:disabled { opacity: .55; }
+    .muted { color: var(--muted); font-size: 14px; }
+    .ok { color: var(--ok); font-weight: 600; }
+    .status { min-height: 1.4em; margin: 14px 2px 0; color: var(--muted); font-size: 14px; }
+    [hidden] { display: none !important; }
+  </style>
+</head>
+<body>
+  <main>
+    <div class="head">
+      <img src="icon-192.png" alt="">
+      <div>
+        <h1>MAX пуши</h1>
+        <p>Уведомления для приложения MAX Custom</p>
+      </div>
+    </div>
+
+    <section class="card" id="open-chat" hidden>
+      <h2>Открываем чат…</h2>
+      <p class="muted">Если MAX Custom не открылся сам, нажмите кнопку.</p>
+      <button id="open-chat-btn" type="button">Открыть в MAX Custom</button>
+    </section>
+
+    <section class="card" id="step-install" hidden>
+      <h2>Шаг 1. Добавьте страницу на экран «Домой»</h2>
+      <p>iPhone присылает уведомления только веб-приложениям с экрана «Домой».</p>
+      <ol>
+        <li>Нажмите «Поделиться»
+          <svg class="share" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="m7 8 5-5 5 5"/><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></svg>
+          внизу Safari.</li>
+        <li>Выберите «На экран „Домой“» и нажмите «Добавить».</li>
+        <li>Откройте «MAX пуши» с экрана «Домой» и продолжите там.</li>
+      </ol>
+    </section>
+
+    <section class="card" id="step-enable" hidden>
+      <h2>Шаг 2. Разрешите уведомления</h2>
+      <p>MAX будет присылать их сюда через Apple, даже когда MAX Custom закрыт. Переписка остаётся в приложении, а здесь только показываются уведомления.</p>
+      <button id="enable" type="button">Включить уведомления</button>
+    </section>
+
+    <section class="card" id="step-connect" hidden>
+      <h2>Шаг 3. Подключите к приложению</h2>
+      <p>Подписка готова. Передайте её в MAX Custom: приложение сообщит MAX, куда слать уведомления.</p>
+      <button id="connect" type="button">Открыть MAX Custom и подключить</button>
+      <button id="copy" class="secondary" type="button">Скопировать код</button>
+      <p class="muted">Если приложение не открылось, скопируйте код и вставьте его в MAX Custom: Настройки → Уведомления → «Вставить код подключения».</p>
+    </section>
+
+    <section class="card" id="unsupported" hidden>
+      <h2>Этот браузер не умеет пуши</h2>
+      <p>Нужен iPhone с iOS 16.4 или новее, а страницу нужно открыть с экрана «Домой».</p>
+    </section>
+
+    <p class="status" id="status" role="status"></p>
+  </main>
+
+  <script>
+    // Публичный VAPID-ключ MAX (тот же, что у web.max.ru): пуши подписывает сервер MAX
+    const MAX_VAPID = 'BAlrEY3NvC8TgHWYfNRY3LZOtrPh8fVtz5eSNqMtN-UNI75jrLjBIAFXqrk87V9FNMVkMqgDtRXlyzvvErmj-8Q';
+    const $ = id => document.getElementById(id);
+    const show = (...ids) => {
+      for (const s of document.querySelectorAll('main > section')) s.hidden = !ids.includes(s.id);
+    };
+    const status = (text, ok = false) => {
+      $('status').textContent = text;
+      $('status').className = 'status' + (ok ? ' ok' : '');
+    };
+
+    const b64urlToBytes = s => {
+      const b64 = s.replace(/-/g, '+').replace(/_/g, '/').padEnd(Math.ceil(s.length / 4) * 4, '=');
+      return Uint8Array.from(atob(b64), c => c.charCodeAt(0));
+    };
+    const bytesToB64url = bytes => btoa(String.fromCharCode(...bytes)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+
+    const params = new URLSearchParams(location.search);
+    const standalone = navigator.standalone === true || matchMedia('(display-mode: standalone)').matches;
+    const isIOS = /iPhone|iPad|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    const supported = 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;
+    let code = '';
+
+    // нажали на уведомление → открываем чат в приложении
+    const chat = params.get('chat');
+    if (chat || params.has('open')) {
+      const target = chat ? 'maxcustom://chat/' + encodeURIComponent(chat) : 'maxcustom://open';
+      show('open-chat');
+      $('open-chat-btn').onclick = () => { location.href = target; };
+      location.href = target;
+    } else {
+      start();
+    }
+
+    async function subscribe() {
+      const reg = await navigator.serviceWorker.register('sw.js');
+      await navigator.serviceWorker.ready;
+      const existing = await reg.pushManager.getSubscription();
+      const sub = existing || await reg.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey: b64urlToBytes(MAX_VAPID),
+      });
+      const json = sub.toJSON();
+      const data = JSON.stringify({ e: sub.endpoint, p: json.keys.p256dh, a: json.keys.auth });
+      return bytesToB64url(new TextEncoder().encode(data));
+    }
+
+    async function ready() {
+      try {
+        code = await subscribe();
+        show('step-connect');
+        status('Подписка готова', true);
+      } catch (e) {
+        show('step-enable');
+        status('Не получилось подписаться: ' + (e.message || e));
+      }
+    }
+
+    function start() {
+      if (isIOS && !standalone) { show('step-install'); return; }
+      if (!supported) { show('unsupported'); return; }
+      if (Notification.permission === 'granted') { ready(); return; }
+      show('step-enable');
+      if (Notification.permission === 'denied') {
+        status('Уведомления запрещены. Разрешите их в Настройках iPhone → Уведомления → MAX пуши.');
+      }
+    }
+
+    $('enable').onclick = async () => {
+      $('enable').disabled = true;
+      const p = await Notification.requestPermission();
+      $('enable').disabled = false;
+      if (p === 'granted') ready();
+      else status('Без разрешения уведомления не придут. Разрешите их в Настройках iPhone.');
+    };
+    $('connect').onclick = () => {
+      location.href = 'maxcustom://push?d=' + code;
+    };
+    $('copy').onclick = async () => {
+      try {
+        await navigator.clipboard.writeText(code);
+        status('Код скопирован', true);
+      } catch {
+        prompt('Скопируйте код', code);
+      }
+    };
+  </script>
+</body>
+</html>
